@@ -61,3 +61,44 @@ class Route53Manager:
             Id=zone_id.split("/")[-1], Comment=new_comment
         )
         return response
+
+    def add_dns_record(self, zone_id, record_name, record_type, record_value):
+        """
+        Add a DNS record to the hosted zone.
+
+        :param zone_id: The ID of the hosted zone.
+        :param record_name: The name of the DNS record.
+        :param record_type: The type of the DNS record (e.g., 'A', 'CNAME', 'TXT').
+        :param record_value: The value of the DNS record.
+        """
+        if record_type not in {
+            "A",
+            "AAAA",
+            "CNAME",
+            "MX",
+            "NS",
+            "PTR",
+            "SOA",
+            "SPF",
+            "SRV",
+            "TXT",
+        }:
+            raise ValueError(f"Invalid record type: {record_type}.")
+
+        response = self.client.change_resource_record_sets(
+            HostedZoneId=zone_id.split("/")[-1],
+            ChangeBatch={
+                "Changes": [
+                    {
+                        "Action": "UPSERT",
+                        "ResourceRecordSet": {
+                            "Name": record_name,
+                            "Type": record_type,
+                            "TTL": 300,
+                            "ResourceRecords": [{"Value": record_value}],
+                        },
+                    }
+                ]
+            },
+        )
+        return response
