@@ -18,40 +18,56 @@ def brute_force(domain_name, target_ns, attempt_limit):
     parent_domain = ".".join(domain_name.rstrip(".").split(".")[1:])
     attempts = 0
     start_time = time.time()
+    ns_seen = {}
 
     while attempts < attempt_limit:
         attempts += 1
-        logger.info(f"Attempt {attempts}: Creating hosted zone for {parent_domain}")
-
+        logger.info("Attempt %d: Creating hosted zone for %s", attempts, parent_domain)
 
         zone_id, name_servers = manager.create_zone(parent_domain)
-        logger.info(f"Zone ID: {zone_id}, got AWS name servers: {name_servers}")
+        formatted_ns = ", ".join(f"{ns} ({ns_seen[ns]})" for ns in name_servers)
+        logger.info("Zone ID: %s, got AWS name servers: %s", zone_id, formatted_ns)
 
-        if any(ns in name_servers for ns in target_ns):
+        found_ns = [ns for ns in target_ns if ns in name_servers]
+        for ns in found_ns:
+            if ns in ns_seen:
+                ns_seen[ns] += 1
+            else:
+                ns_seen[ns] = 1
+
+        if found_ns:
             elapsed_time = time.time() - start_time
-            response_obj = {
+            result_obj = {
                 "success": True,
                 "domain_name": domain_name,
                 "target_ns": target_ns,
-                "found_ns": name_servers,
+                "found_ns": found_ns,
                 "attempts": attempts,
                 "elapsed_time": elapsed_time,
+                "unique_ns": len(ns_seen.keys()),
             }
-            logger.info(response_obj)
-            return response_obj
+            logger.info(result_obj)
+            return result_obj
 
-        logger.info("No match, deleting...")
+        logger.info(
+            "No match found. Deleting... Encountered %d unique AWS name servers so far.",
+            len(ns_seen.keys()),
+        )
         manager.delete_zone(zone_id)
         time.sleep(1)
 
+    if attempts >= attempt_limit:
+        logger.info("Maximum number of attempts tried")
+
     elapsed_time = time.time() - start_time
-    response_obj = {
+    result_obj = {
         "success": False,
         "domain_name": domain_name,
         "target_ns": target_ns,
         "found_ns": None,
         "attempts": attempts,
         "elapsed_time": elapsed_time,
+        "unique_ns": len(ns_seen.keys()),
     }
-    logger.info(response_obj)
-    return response_obj
+    logger.info(result_obj)
+    return result_obj

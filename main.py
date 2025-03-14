@@ -35,9 +35,7 @@ args = parser.parse_args()
 
 def main():
     dns_resolver = DNSResolver()
-    #manager = Route53Manager()
     name_servers = dns_resolver.get_aws_ns_servers(args.domain)
-    logger.info(name_servers)
     result = brute_force(args.domain, name_servers, args.max_attempts)
     print(result)
 
