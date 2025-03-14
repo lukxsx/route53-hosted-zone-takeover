@@ -22,7 +22,7 @@ def setup_logging(log_file="app.log"):
 
         # Create formatters and add them to handlers
         formatter = logging.Formatter(
-            "%(asctime)s - %(message)s"
+            "[%(asctime)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
         )
         file_handler.setFormatter(formatter)
         console_handler.setFormatter(formatter)
