@@ -5,7 +5,7 @@ from logger_config import setup_logging
 logger = setup_logging()
 
 
-def brute_force(manager: Route53Manager, domain_name, target_ns, attempt_limit):
+def brute_force(domain_name, target_ns, attempt_limit):
     """
     Perform brute force attempts to generate and delete Route 53 hosted zones.
 
@@ -14,6 +14,7 @@ def brute_force(manager: Route53Manager, domain_name, target_ns, attempt_limit):
     :param attempt_limit: Maximum number of attempts.
     :return: Status object indicating success, domain name, target name servers, found name server, attempt count, and elapsed time.
     """
+    manager = Route53Manager()
     parent_domain = ".".join(domain_name.rstrip(".").split(".")[1:])
     attempts = 0
     start_time = time.time()
@@ -23,7 +24,7 @@ def brute_force(manager: Route53Manager, domain_name, target_ns, attempt_limit):
         logger.info(f"Attempt {attempts}: Creating hosted zone for {parent_domain}")
 
 
-        zone_id, name_servers = manager.create_zone(parent_domain, tags=[])
+        zone_id, name_servers = manager.create_zone(parent_domain)
         logger.info(f"Zone ID: {zone_id}, got AWS name servers: {name_servers}")
 
         if any(ns in name_servers for ns in target_ns):
@@ -39,7 +40,9 @@ def brute_force(manager: Route53Manager, domain_name, target_ns, attempt_limit):
             logger.info(response_obj)
             return response_obj
 
+        logger.info("No match, deleting...")
         manager.delete_zone(zone_id)
+        time.sleep(1)
 
     elapsed_time = time.time() - start_time
     response_obj = {

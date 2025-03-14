@@ -7,13 +7,12 @@ import dns.query
 import dns.rdatatype
 import dns.name
 
-
+ROOT_NS = "198.41.0.4"
 class DNSResolver:
     """
     A class to manage DNS resolution and delegation chain lookups.
     """
 
-    ROOT_NS = "198.41.0.4"  # IP of a.root-servers.net
 
     def resolve_ns_ip(self, nameserver):
         """
@@ -53,7 +52,7 @@ class DNSResolver:
         :param max_depth: The maximum depth to follow the delegation chain.
         :return: A list of delegation nameservers.
         """
-        delegation_ns = [{"name": ".", "ns": self.ROOT_NS}]
+        delegation_ns = [{"name": ".", "ns": ROOT_NS}]
         domain = dns.name.from_text(domain)
 
         for depth in range(max_depth):
@@ -62,9 +61,7 @@ class DNSResolver:
             current_ns = delegation_ns[0]["ns"]
             print(f"[{depth+1}] Querying {current_ns} for NS records of {domain}")
 
-            response = self.non_recursive_lookup(
-                domain.to_text(), current_ns, dns.rdatatype.NS
-            )
+            response = self.non_recursive_lookup(domain.to_text(), current_ns, dns.rdatatype.NS)
             if not response or response.rcode() != dns.rcode.NOERROR:
                 return delegation_ns
 
