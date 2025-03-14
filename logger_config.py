@@ -8,7 +8,7 @@ def setup_logging(log_file="app.log"):
 
     :param log_file: The file to write logs to.
     """
-    logger = logging.getLogger()
+    logger = logging.getLogger("logger")
     logger.setLevel(logging.INFO)
 
     # Check if handlers are already added to avoid duplicate logs

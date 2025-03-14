@@ -58,7 +58,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 logger = setup_logging(
-    log_file=f"{args.domain}_{datetime.now().strftime("%Y-%m-%d_%H-%M")}"
+    log_file=f"{args.domain}_{datetime.now().strftime("%Y-%m-%d_%H-%M")}.log"
 )
 
 if args.record_type or args.record_name or args.record_value:

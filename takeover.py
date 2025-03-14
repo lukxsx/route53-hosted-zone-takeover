@@ -1,8 +1,8 @@
 from route53 import Route53Manager
 import time
-from logger_config import setup_logging
+import logging
 
-logger = setup_logging()
+logger = logging.getLogger("logger")
 
 
 def time_to_str(elapsed_time):
