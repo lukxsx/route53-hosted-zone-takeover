@@ -48,12 +48,6 @@ parser.add_argument(
 )
 parser.add_argument("--record_name", help="The name of the DNS record.")
 parser.add_argument("--record_value", help="The value of the DNS record.")
-parser.add_argument(
-    "--ttl",
-    type=int,
-    default=300,
-    help="The time-to-live (TTL) of the DNS record in seconds.",
-)
 
 args = parser.parse_args()
 
