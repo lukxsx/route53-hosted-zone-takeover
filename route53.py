@@ -11,10 +11,11 @@ class Route53Manager:
     A class to manage AWS Route 53 hosted zones.
     """
 
-    def __init__(self):
+    def __init__(self, tags=[]):
         self.client = boto3.client("route53")
+        self.tags = tags
 
-    def create_zone(self, domain_name: str, tags=None):
+    def create_zone(self, domain_name: str):
         """
         Create a hosted zone for the given domain name.
 
@@ -30,11 +31,11 @@ class Route53Manager:
         hosted_zone_id = response["HostedZone"]["Id"]
         name_servers = response["DelegationSet"]["NameServers"]
 
-        if tags is not None:
+        if len(self.tags) > 0:
             self.client.change_tags_for_resource(
                 ResourceType="hostedzone",
                 ResourceId=hosted_zone_id.split("/")[-1],
-                AddTags=tags,
+                AddTags=self.tags,
             )
 
         return hosted_zone_id, name_servers

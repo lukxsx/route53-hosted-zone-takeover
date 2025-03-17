@@ -48,8 +48,21 @@ parser.add_argument(
 )
 parser.add_argument("--record_name", help="The name of the DNS record.")
 parser.add_argument("--record_value", help="The value of the DNS record.")
+parser.add_argument(
+    "--tags", nargs="+", help="AWS tags in key=value format", required=False
+)
+
 
 args = parser.parse_args()
+
+
+def parse_tags(tag_list):
+    tags = []
+    for tag in tag_list:
+        key, value = tag.split("=")
+        tags.append({"Key": key, "Value": value})
+    return tags
+
 
 logger = setup_logging(
     log_file=f"{args.domain}_{datetime.now().strftime("%Y-%m-%d_%H-%M")}.log"
@@ -65,8 +78,12 @@ args = parser.parse_args()
 
 
 def main():
+    aws_tags = []
+    if args.tags:
+        aws_tags = parse_tags(args.tags)
+
     dns_resolver = DNSResolver()
-    manager = Route53Manager()
+    manager = Route53Manager(tags=aws_tags)
     name_servers = dns_resolver.get_aws_ns_servers(args.domain)
     result = brute_force(manager, args.domain, name_servers, args.max_attempts)
     print(result)
