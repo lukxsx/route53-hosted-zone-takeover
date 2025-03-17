@@ -55,6 +55,9 @@ def brute_force(manager: Route53Manager, domain_name, target_ns, attempt_limit):
                 "unique_ns": len(ns_seen.keys()),
             }
             logger.info(result_obj)
+            manager.update_zone_comment(
+                zone_id, f"Takeover for subdomain {domain_name}, NS: {found_ns}"
+            )
             return result_obj
 
         logger.info(
