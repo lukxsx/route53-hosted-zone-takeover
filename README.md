@@ -4,6 +4,10 @@ This tool attempts to take over AWS Route 53 hosted zones by brute-forcing the z
 
 The tool is utilizing the takeover method described in [this blogpost](https://www.form3.tech/blog/engineering/dangling-danger).
 
+## Disclaimer
+
+This tool is intended for educational and testing purposes only. The authors do not take any responsibility for any misuse of this tool. Use it at your own risk. Performing unauthorized actions on systems that you do not own or have explicit permission to test may be illegal and unethical.
+
 ## Features
 
 - Brute force AWS Route 53 hosted zones.
@@ -37,4 +41,3 @@ Alternatively, you can use `pip` with the included `requirements.txt`. In the la
 ### Example
 
     uv run main.py --max_attempts 1000 --record_type A --record_name sub.example.com --record_value 192.0.2.1 --tags Project=Takeover sub.example.com
-
