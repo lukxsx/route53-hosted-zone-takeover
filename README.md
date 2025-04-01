@@ -2,6 +2,8 @@
 
 This tool attempts to take over AWS Route 53 hosted zones by brute-forcing the zones until a zone with the desired AWS nameservers is reached. It allows testing of NS assignments and adding DNS records upon successful takeover.
 
+The tool is utilizing the takeover method described in [this blogpost](https://www.form3.tech/blog/engineering/dangling-danger).
+
 ## Features
 
 - Brute force AWS Route 53 hosted zones.
@@ -15,7 +17,7 @@ It is recommended to use the [`uv`](https://github.com/astral-sh/uv) package man
 
     uv sync
 
-Alternatively, you can use `pip` with the included `requirements.txt`.
+Alternatively, you can use `pip` with the included `requirements.txt`. In the later usage steps, replace `uv run` with `python`.
 
     pip install -r requirements.txt
 
