@@ -9,9 +9,19 @@ This tool attempts to take over AWS Route 53 hosted zones by brute-forcing the z
 - Add DNS records upon successful takeover.
 - Logging of operations.
 
+## Installation
+
+It is recommended to use the [`uv`](https://github.com/astral-sh/uv) package manager for Python to run this project.
+
+    uv sync
+
+Alternatively, you can use `pip` with the included `requirements.txt`.
+
+    pip install -r requirements.txt
+
 ## Usage
 
-python3 main.py [options] <domain>
+    uv run main.py [options] <domain>
 
 ### Options
 
@@ -24,5 +34,5 @@ python3 main.py [options] <domain>
 
 ### Example
 
-    python3 main.py --max_attempts 1000 --record_type A --record_name sub.example.com --record_value 192.0.2.1 --tags Project=Takeover sub.example.com
+    uv run main.py --max_attempts 1000 --record_type A --record_name sub.example.com --record_value 192.0.2.1 --tags Project=Takeover sub.example.com
 
